@@ -538,8 +538,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 @Override
                 public void onClick(View v) {
                     if (!isEnabled() || !isTouchEnabled()) return;
-                    if (mSlideState != PanelState.EXPANDED && mSlideState != PanelState.ANCHORED) {
-                        if (mAnchorPoint < 1.0f) {
+                    if (mSlideState != PanelState.EXPANDED) {
+                        if (mSlideState == PanelState.COLLAPSED && mAnchorPoint < 1.0f) {
                             setPanelState(PanelState.ANCHORED);
                         } else {
                             setPanelState(PanelState.EXPANDED);
