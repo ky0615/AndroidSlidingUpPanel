@@ -8,12 +8,12 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -23,7 +23,6 @@ import android.view.accessibility.AccessibilityEvent;
 import android.widget.ListView;
 import android.widget.ScrollView;
 
-import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.sothree.slidinguppanel.library.R;
 
 public class SlidingUpPanelLayout extends ViewGroup {
@@ -1028,7 +1027,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 screenY >= viewLocation[1] && screenY < viewLocation[1] + view.getHeight();
     }
 
-    private int getScrollableViewScrollPosition() {
+    protected int getScrollableViewScrollPosition() {
         if (mScrollableView == null) return 0;
         if (mScrollableView instanceof ScrollView) {
             if (mIsSlidingUp) {
@@ -1049,6 +1048,13 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 View lastChild = lv.getChildAt(lv.getChildCount() - 1);
                 // Approximate the scroll position based on the bottom child and the last visible item
                 return (lv.getAdapter().getCount() - lv.getLastVisiblePosition() - 1) * lastChild.getHeight() + lastChild.getBottom() - lv.getBottom();
+            }
+        } else if (mScrollableView instanceof RecyclerView) {
+            RecyclerView recyclerView = (RecyclerView) mScrollableView;
+            if (mIsSlidingUp) {
+                return recyclerView.computeVerticalScrollOffset();
+            } else {
+                return recyclerView.computeVerticalScrollExtent() - recyclerView.computeVerticalScrollOffset();
             }
         } else {
             return 0;
@@ -1136,11 +1142,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private void applyParallaxForCurrentSlideOffset() {
         if (mParallaxOffset > 0) {
             int mainViewOffset = getCurrentParalaxOffset();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                mMainView.setTranslationY(mainViewOffset);
-            } else {
-                AnimatorProxy.wrap(mMainView).setTranslationY(mainViewOffset);
-            }
+            mMainView.setTranslationY(mainViewOffset);
         }
     }
 
