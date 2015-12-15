@@ -1,55 +1,13 @@
 apply plugin: 'maven'
-apply plugin: 'signing'
 
-def repositoryUrl
-if (isReleaseBuild()) {
-    println 'RELEASE BUILD'
-    repositoryUrl = "http://csdmaven:8081/artifactory/libs-release-local/"
-} else {
-    println 'DEBUG BUILD'
-    repositoryUrl = "http://csdmaven:8081/artifactory/libs-snapshot-local/"
-}
-
-afterEvaluate { project ->
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-//                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-                pom.artifactId = 'android-sliding-up-panel'
-                pom.name = "Android Sliding Up Panel"
-
-                repository(url: repositoryUrl) {
-                    authentication(userName: project.getProperties().get('mavenUser'), password: project.getProperties().get('mavenPassword'))
-                }
-
-                pom.version = '3.1.1m5'
-            }
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository url: "file:///Users/tarosa/workspace/maven"
+            pom.artifactId = 'android-sliding-up-panel'
+            pom.name = "Android Sliding Up Panel"
+            pom.groupId = 'android'
+            pom.version = '3.1.4'
         }
-    }
-
-//    signing {
-//        required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
-//        sign configurations.archives
-//    }
-
-    task androidJavadocs(type: Javadoc) {
-        source = android.sourceSets.main.java.srcDirs
-    }
-
-    task androidJavadocsJar(type: Jar) {
-        classifier = 'javadoc'
-        from androidJavadocs.destinationDir
-    }
-
-    task androidSourcesJar(type: Jar) {
-        classifier = 'sources'
-        from android.sourceSets.main.java.srcDirs
-    }
-
-    artifacts {
-        //archives packageReleaseJar
-        archives androidSourcesJar
-        archives androidJavadocsJar
     }
 }
