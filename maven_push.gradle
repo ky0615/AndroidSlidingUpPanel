@@ -7,7 +7,7 @@ uploadArchives {
             pom.artifactId = 'android-sliding-up-panel'
             pom.name = "Android Sliding Up Panel"
             pom.groupId = 'ky0615'
-            pom.version = '3.2.2'
+            pom.version = '3.2.3'
         }
     }
 }
